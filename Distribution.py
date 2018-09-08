@@ -51,6 +51,25 @@ def save_to_excel(squadre):
     campionato.save()
 
 
+def make_teams(clusters, squadre):
+    ruoli = ["A", "C", "D", "P"]
+    for tier in clusters:
+        shuffle(squadre)
+        for ruolo in ruoli:
+            try:
+                part = tier.get_group(ruolo).reset_index(drop=True)
+            except:
+                continue
+            while part.shape[0] > 0:
+                for i in range(0, len(squadre)):
+                    if part.shape[0] > 0:
+                        player = part.loc[0]
+                        squadre[i] = squadre[i].append(player)
+                        part = part.drop(0).reset_index(drop=True)
+                    else:
+                        print("Tier Finito")
+
+
 def DistribGioc(n_squadre=8, n_tiers=4):
     df = prepare_data()
 
@@ -83,27 +102,27 @@ def DistribGioc(n_squadre=8, n_tiers=4):
     centers = kmeans.cluster_centers_
     plt.scatter(centers[:, 0], centers[:, 1], c="black", s=200, alpha=0.5)
     # plt.show()
-    df["Clusters"] = y_kmeans
+    df["clusters"] = y_kmeans
     """
-    Primo = df[df["Clusters"]==0].sample(frac=1).reset_index(drop=True)
+    Primo = df[df["clusters"]==0].sample(frac=1).reset_index(drop=True)
     Primo = Primo.groupby("R")
-    Secondo= df[df["Clusters"]==1].sample(frac=1).reset_index(drop=True)
+    Secondo= df[df["clusters"]==1].sample(frac=1).reset_index(drop=True)
     Secondo = Secondo.groupby("R")
     
-    Terzo= df[df["Clusters"]==2].sample(frac=1).reset_index(drop=True)
+    Terzo= df[df["clusters"]==2].sample(frac=1).reset_index(drop=True)
     Terzo = Terzo.groupby("R")
     
-    Quarto= df[df["Clusters"]==3].sample(frac=1).reset_index(drop=True)
+    Quarto= df[df["clusters"]==3].sample(frac=1).reset_index(drop=True)
     Quarto = Quarto.groupby("R")
     
-    Quinto= df[df["Clusters"]==4].sample(frac=1).reset_index(drop=True)
+    Quinto= df[df["clusters"]==4].sample(frac=1).reset_index(drop=True)
     Quinto = Quinto.groupby("R")
     
-    Sesto= df[df["Clusters"]==5].sample(frac=1).reset_index(drop=True)
+    Sesto= df[df["clusters"]==5].sample(frac=1).reset_index(drop=True)
     Sesto = Sesto.groupby("R")
     """
 
-    # Quinto= df[df["Clusters"]==4].sample(frac=1).reset_index(drop=True)
+    # Quinto= df[df["clusters"]==4].sample(frac=1).reset_index(drop=True)
     #
     """
     Sq1=pd.DataFrame()
@@ -132,23 +151,7 @@ def DistribGioc(n_squadre=8, n_tiers=4):
     # print(squadre[1])
     # '''
 
-    a = 0
-    ruoli = ["A", "C", "D", "P"]
-    for tier in Clusters:
-        shuffle(squadre)
-        for ruolo in ruoli:
-            try:
-                part = tier.get_group(ruolo).reset_index(drop=True)
-            except:
-                continue
-            while part.shape[0] > 0:
-                for i in range(0, n):
-                    if part.shape[0] > 0:
-                        player = part.loc[0]
-                        squadre[i] = squadre[i].append(player)
-                        part = part.drop(0).reset_index(drop=True)
-                    else:
-                        print("Tier Finito")
+    make_teams(clusters, squadre)
 
     save_to_excel(squadre)
 
