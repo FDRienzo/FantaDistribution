@@ -12,50 +12,59 @@ from sklearn.preprocessing import MinMaxScaler
 from random import choice
 from random import shuffle
 
-def DistribGioc(n_squadre=8,n_tiers=4):
+
+def DistribGioc(n_squadre=8, n_tiers=4):
     n = n_squadre
     m = n_tiers
 
-
-    df = pd.read_excel('Data\FinManDBa.xlsx')
+    df = pd.read_excel("Data\FinManDBa.xlsx")
     df = df.dropna()
-    portieri = df[df["R"]=="P"]
-    df = df[df["R"]!="P"]
-    portieri = portieri[portieri["Tit"]>=0.75].reset_index(drop=True)
-    df = pd.concat([df,portieri]).reset_index(drop=True)
+    portieri = df[df["R"] == "P"]
+    df = df[df["R"] != "P"]
+    portieri = portieri[portieri["Tit"] >= 0.75].reset_index(drop=True)
+    df = pd.concat([df, portieri]).reset_index(drop=True)
 
-    #print(df)
+    # print(df)
 
-    #print(df.columns)
-    list = ['Tit', 'Quote', 'Predict',
-           'Predict STD', 'FinVal', 'Diff', 'Tot. (%)', 'SpesaPer', 'SpesaM',
-           'SpesaDiff']
-    df[list]=(df[list]-df[list].min())/(df[list].max()-df[list].min())
+    # print(df.columns)
+    list = [
+        "Tit",
+        "Quote",
+        "Predict",
+        "Predict STD",
+        "FinVal",
+        "Diff",
+        "Tot. (%)",
+        "SpesaPer",
+        "SpesaM",
+        "SpesaDiff",
+    ]
+    df[list] = (df[list] - df[list].min()) / (df[list].max() - df[list].min())
 
     fig = plt.figure(figsize=(8, 6))
-    ax = fig.add_subplot(111, projection='3d')
+    ax = fig.add_subplot(111, projection="3d")
 
     xs = df["SpesaPer"]
     ys = df["Tit"]
     zs = df["Quote"]
-    ax.scatter(xs, ys, zs, s=50, alpha=0.6, edgecolors='w')
+    ax.scatter(xs, ys, zs, s=50, alpha=0.6, edgecolors="w")
 
-    ax.set_xlabel('SpesaPer')
-    ax.set_ylabel('Tit')
-    ax.set_zlabel('Quote')
+    ax.set_xlabel("SpesaPer")
+    ax.set_ylabel("Tit")
+    ax.set_zlabel("Quote")
 
-    list = ["SpesaPer","SpesaM","Tit","Predict"]
+    list = ["SpesaPer", "SpesaM", "Tit", "Predict"]
 
     kmeans = KMeans(n_clusters=m)
     kmeans.fit(df[list])
     y_kmeans = kmeans.predict(df[list])
-    plt.scatter(df["SpesaPer"], df["SpesaM"], c=y_kmeans, s=50, cmap='viridis')
+    plt.scatter(df["SpesaPer"], df["SpesaM"], c=y_kmeans, s=50, cmap="viridis")
 
     centers = kmeans.cluster_centers_
-    plt.scatter(centers[:, 0], centers[:, 1], c='black', s=200, alpha=0.5);
-    #plt.show()
+    plt.scatter(centers[:, 0], centers[:, 1], c="black", s=200, alpha=0.5)
+    # plt.show()
     df["Clusters"] = y_kmeans
-    '''
+    """
     Primo = df[df["Clusters"]==0].sample(frac=1).reset_index(drop=True)
     Primo = Primo.groupby("R")
     Secondo= df[df["Clusters"]==1].sample(frac=1).reset_index(drop=True)
@@ -72,16 +81,16 @@ def DistribGioc(n_squadre=8,n_tiers=4):
     
     Sesto= df[df["Clusters"]==5].sample(frac=1).reset_index(drop=True)
     Sesto = Sesto.groupby("R")
-    '''
+    """
     Clusters = []
 
-    for j in range(0,m):
-        Clusters.append(df[df["Clusters"]==j].sample(frac=1).reset_index(drop=True))
+    for j in range(0, m):
+        Clusters.append(df[df["Clusters"] == j].sample(frac=1).reset_index(drop=True))
         Clusters[j] = Clusters[j].groupby("R")
 
-    #Quinto= df[df["Clusters"]==4].sample(frac=1).reset_index(drop=True)
+    # Quinto= df[df["Clusters"]==4].sample(frac=1).reset_index(drop=True)
     #
-    '''
+    """
     Sq1=pd.DataFrame()
     Sq2=pd.DataFrame()
     Sq3=pd.DataFrame()
@@ -94,21 +103,21 @@ def DistribGioc(n_squadre=8,n_tiers=4):
     Sq10=pd.DataFrame()
     Sq11=pd.DataFrame()
     Sq12=pd.DataFrame()
-    '''
+    """
 
-    #squadre = [Sq1,Sq2,Sq3,Sq4,Sq5,Sq6,Sq7,Sq8]
-         #,Sq9,Sq10,Sq11,Sq12]
-    squadre =[]
-    for i in range(0,n):
+    # squadre = [Sq1,Sq2,Sq3,Sq4,Sq5,Sq6,Sq7,Sq8]
+    # ,Sq9,Sq10,Sq11,Sq12]
+    squadre = []
+    for i in range(0, n):
         squadre.append(pd.DataFrame())
         print(i)
-    #squadre[1] = squadre[1].append(Clusters[0].iloc[1])
-    #squadre[1] = squadre[1].append(Clusters[0].iloc[2])
-    #print(squadre[1])
-    #'''
+    # squadre[1] = squadre[1].append(Clusters[0].iloc[1])
+    # squadre[1] = squadre[1].append(Clusters[0].iloc[2])
+    # print(squadre[1])
+    # '''
 
     a = 0
-    ruoli = ["A","C","D","P"]
+    ruoli = ["A", "C", "D", "P"]
     for tier in Clusters:
         shuffle(squadre)
         for ruolo in ruoli:
@@ -116,22 +125,27 @@ def DistribGioc(n_squadre=8,n_tiers=4):
                 part = tier.get_group(ruolo).reset_index(drop=True)
             except:
                 continue
-            while part.shape[0]>0:
-                for i in range(0,n):
+            while part.shape[0] > 0:
+                for i in range(0, n):
                     if part.shape[0] > 0:
                         player = part.loc[0]
-                        squadre[i]=squadre[i].append(player)
-                        part= part.drop(0).reset_index(drop=True)
+                        squadre[i] = squadre[i].append(player)
+                        part = part.drop(0).reset_index(drop=True)
                     else:
                         print("Tier Finito")
 
-    Campionato =pd.ExcelWriter('Teams\Campionato.xlsx', engine='xlsxwriter')
-    for i in range(0,n):
-        squadre[i]=squadre[i].sort_values(by = ["SpesaPer"],ascending=False).reset_index(drop=True)
-        squadre[i]= squadre[i][squadre[i].index < 30]
-        squadre[i].to_excel(Campionato, sheet_name='Squadra%d.xlsx' %i)
+    Campionato = pd.ExcelWriter("Teams\Campionato.xlsx", engine="xlsxwriter")
+    for i in range(0, n):
+        squadre[i] = (
+            squadre[i]
+            .sort_values(by=["SpesaPer"], ascending=False)
+            .reset_index(drop=True)
+        )
+        squadre[i] = squadre[i][squadre[i].index < 30]
+        squadre[i].to_excel(Campionato, sheet_name="Squadra%d.xlsx" % i)
         print("Squadra%d.xlsx" % i)
     Campionato.save()
 
 
-DistribGioc(10,6)
+DistribGioc(10, 6)
+
