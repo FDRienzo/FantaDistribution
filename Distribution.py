@@ -37,10 +37,21 @@ def make_graph(df):
     ax.set_zlabel("Quote")
 
 
-def DistribGioc(n_squadre=8, n_tiers=4):
-    n = n_squadre
-    m = n_tiers
+def save_to_excel(squadre):
+    campionato = pd.ExcelWriter("Teams\Campionato.xlsx", engine="xlsxwriter")
+    for i in range(0, len(squadre)):
+        squadre[i] = (
+            squadre[i]
+            .sort_values(by=["SpesaPer"], ascending=False)
+            .reset_index(drop=True)
+        )
+        squadre[i] = squadre[i][squadre[i].index < 30]
+        squadre[i].to_excel(campionato, sheet_name=f"Squadra{i}.xlsx")
+        print(f"Squadra{i}.xlsx")
+    campionato.save()
 
+
+def DistribGioc(n_squadre=8, n_tiers=4):
     df = prepare_data()
 
     # print(df)
@@ -64,7 +75,7 @@ def DistribGioc(n_squadre=8, n_tiers=4):
 
     cols = ["SpesaPer", "SpesaM", "Tit", "Predict"]
 
-    kmeans = KMeans(n_clusters=m)
+    kmeans = KMeans(n_clusters=n_tiers)
     kmeans.fit(df[cols])
     y_kmeans = kmeans.predict(df[cols])
     plt.scatter(df["SpesaPer"], df["SpesaM"], c=y_kmeans, s=50, cmap="viridis")
@@ -139,17 +150,7 @@ def DistribGioc(n_squadre=8, n_tiers=4):
                     else:
                         print("Tier Finito")
 
-    Campionato = pd.ExcelWriter("Teams\Campionato.xlsx", engine="xlsxwriter")
-    for i in range(0, n):
-        squadre[i] = (
-            squadre[i]
-            .sort_values(by=["SpesaPer"], ascending=False)
-            .reset_index(drop=True)
-        )
-        squadre[i] = squadre[i][squadre[i].index < 30]
-        squadre[i].to_excel(Campionato, sheet_name="Squadra%d.xlsx" % i)
-        print("Squadra%d.xlsx" % i)
-    Campionato.save()
+    save_to_excel(squadre)
 
 
 DistribGioc(10, 6)
