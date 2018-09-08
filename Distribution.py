@@ -32,7 +32,7 @@ def DistribGioc(n_squadre=8, n_tiers=4):
     # print(df)
 
     # print(df.columns)
-    list = [
+    cols = [
         "Tit",
         "Quote",
         "Predict",
@@ -44,7 +44,7 @@ def DistribGioc(n_squadre=8, n_tiers=4):
         "SpesaM",
         "SpesaDiff",
     ]
-    df[list] = (df[list] - df[list].min()) / (df[list].max() - df[list].min())
+    df[cols] = (df[cols] - df[cols].min()) / (df[cols].max() - df[cols].min())
 
     fig = plt.figure(figsize=(8, 6))
     ax = fig.add_subplot(111, projection="3d")
@@ -58,11 +58,11 @@ def DistribGioc(n_squadre=8, n_tiers=4):
     ax.set_ylabel("Tit")
     ax.set_zlabel("Quote")
 
-    list = ["SpesaPer", "SpesaM", "Tit", "Predict"]
+    cols = ["SpesaPer", "SpesaM", "Tit", "Predict"]
 
     kmeans = KMeans(n_clusters=m)
-    kmeans.fit(df[list])
-    y_kmeans = kmeans.predict(df[list])
+    kmeans.fit(df[cols])
+    y_kmeans = kmeans.predict(df[cols])
     plt.scatter(df["SpesaPer"], df["SpesaM"], c=y_kmeans, s=50, cmap="viridis")
 
     centers = kmeans.cluster_centers_
