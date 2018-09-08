@@ -91,11 +91,6 @@ def DistribGioc(n_squadre=8, n_tiers=4):
     Sesto= df[df["Clusters"]==5].sample(frac=1).reset_index(drop=True)
     Sesto = Sesto.groupby("R")
     """
-    Clusters = []
-
-    for j in range(0, m):
-        Clusters.append(df[df["Clusters"] == j].sample(frac=1).reset_index(drop=True))
-        Clusters[j] = Clusters[j].groupby("R")
 
     # Quinto= df[df["Clusters"]==4].sample(frac=1).reset_index(drop=True)
     #
@@ -116,10 +111,11 @@ def DistribGioc(n_squadre=8, n_tiers=4):
 
     # squadre = [Sq1,Sq2,Sq3,Sq4,Sq5,Sq6,Sq7,Sq8]
     # ,Sq9,Sq10,Sq11,Sq12]
-    squadre = []
-    for i in range(0, n):
-        squadre.append(pd.DataFrame())
-        print(i)
+    clusters = [
+        df[df["clusters"] == i].sample(frac=1).reset_index(drop=True).groupby("R")
+        for i in range(0, n_tiers)
+    ]
+    squadre = [pd.DataFrame() for i in range(0, n_squadre)]
     # squadre[1] = squadre[1].append(Clusters[0].iloc[1])
     # squadre[1] = squadre[1].append(Clusters[0].iloc[2])
     # print(squadre[1])
