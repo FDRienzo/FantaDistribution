@@ -1,15 +1,8 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-from copy import deepcopy
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib as mpl
 import numpy as np
-import seaborn as sns
+import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.cluster import KMeans
-from sklearn.datasets import make_blobs
-from sklearn.preprocessing import MinMaxScaler
-from random import choice
 from random import shuffle
 
 
