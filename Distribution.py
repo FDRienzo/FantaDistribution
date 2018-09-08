@@ -70,7 +70,7 @@ def make_teams(clusters, squadre):
                         print("Tier Finito")
 
 
-def DistribGioc(n_squadre=8, n_tiers=4):
+def distrib_gioc(n_squadre=8, n_tiers=4):
     df = prepare_data()
 
     # print(df)
@@ -156,5 +156,5 @@ def DistribGioc(n_squadre=8, n_tiers=4):
     save_to_excel(squadre)
 
 
-DistribGioc(10, 6)
-
+if __name__ == "__main__":
+    distrib_gioc(10, 6)
