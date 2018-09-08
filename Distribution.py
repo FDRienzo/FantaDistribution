@@ -23,6 +23,20 @@ def prepare_data():
     return pd.concat([df, portieri]).reset_index(drop=True)
 
 
+def make_graph(df):
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot(111, projection="3d")
+
+    xs = df["SpesaPer"]
+    ys = df["Tit"]
+    zs = df["Quote"]
+    ax.scatter(xs, ys, zs, s=50, alpha=0.6, edgecolors="w")
+
+    ax.set_xlabel("SpesaPer")
+    ax.set_ylabel("Tit")
+    ax.set_zlabel("Quote")
+
+
 def DistribGioc(n_squadre=8, n_tiers=4):
     n = n_squadre
     m = n_tiers
@@ -46,17 +60,7 @@ def DistribGioc(n_squadre=8, n_tiers=4):
     ]
     df[cols] = (df[cols] - df[cols].min()) / (df[cols].max() - df[cols].min())
 
-    fig = plt.figure(figsize=(8, 6))
-    ax = fig.add_subplot(111, projection="3d")
-
-    xs = df["SpesaPer"]
-    ys = df["Tit"]
-    zs = df["Quote"]
-    ax.scatter(xs, ys, zs, s=50, alpha=0.6, edgecolors="w")
-
-    ax.set_xlabel("SpesaPer")
-    ax.set_ylabel("Tit")
-    ax.set_zlabel("Quote")
+    make_graph(df)
 
     cols = ["SpesaPer", "SpesaM", "Tit", "Predict"]
 
