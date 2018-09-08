@@ -13,16 +13,21 @@ from random import choice
 from random import shuffle
 
 
+def prepare_data():
+    df = pd.read_excel("Data\FinManDBa.xlsx")
+    df = df.dropna()
+    # tiene solo portieri titolari
+    portieri = df[df["R"] == "P"]
+    df = df[df["R"] != "P"]
+    portieri = portieri[portieri["Tit"] >= 0.75].reset_index(drop=True)
+    return pd.concat([df, portieri]).reset_index(drop=True)
+
+
 def DistribGioc(n_squadre=8, n_tiers=4):
     n = n_squadre
     m = n_tiers
 
-    df = pd.read_excel("Data\FinManDBa.xlsx")
-    df = df.dropna()
-    portieri = df[df["R"] == "P"]
-    df = df[df["R"] != "P"]
-    portieri = portieri[portieri["Tit"] >= 0.75].reset_index(drop=True)
-    df = pd.concat([df, portieri]).reset_index(drop=True)
+    df = prepare_data()
 
     # print(df)
 
