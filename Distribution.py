@@ -38,10 +38,25 @@ def save_to_excel(squadre):
             .sort_values(by=["SpesaPer"], ascending=False)
             .reset_index(drop=True)
         )
-        squadre[i] = squadre[i][squadre[i].index < 30]
+        ruoli = squadre[i].groupby(["R"])
+        squadre[i] = pcutting(ruoli)
         squadre[i].to_excel(campionato, sheet_name=f"Squadra{i}.xlsx")
         print(f"Squadra{i}.xlsx")
     campionato.save()
+
+def pcutting(df, n_att=6,n_cent = 8, n_dif = 8, n_por = 2):
+    partA = df.get_group("A").reset_index(drop=True)
+    partA = partA[partA.index < n_att]
+    partC = df.get_group("C").reset_index(drop=True)
+    partC = partC[partC.index<n_cent]
+    partD = df.get_group("D").reset_index(drop=True)
+    partD = partD[partD.index < n_dif]
+    partP = df.get_group("P").reset_index(drop=True)
+    partP = partP[partP.index < n_por]
+    list =[partA,partC,partD,partP]
+    squadra = pd.concat(list)
+    return squadra
+
 
 
 def make_teams(clusters, squadre):
@@ -150,4 +165,4 @@ def distrib_gioc(n_squadre=8, n_tiers=4):
 
 
 if __name__ == "__main__":
-    distrib_gioc(10, 6)
+    distrib_gioc(10,6)
